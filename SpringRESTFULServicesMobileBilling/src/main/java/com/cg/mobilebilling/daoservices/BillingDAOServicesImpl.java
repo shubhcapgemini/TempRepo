@@ -4,6 +4,7 @@ import java.util.List;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.TypedQuery;
 
 import org.springframework.stereotype.Repository;
 
@@ -11,8 +12,10 @@ import com.cg.mobilebilling.beans.Bill;
 import com.cg.mobilebilling.beans.Customer;
 import com.cg.mobilebilling.beans.Plan;
 import com.cg.mobilebilling.beans.PostpaidAccount;
+import com.cg.mobilebilling.beans.StandardPlan;
 import com.cg.mobilebilling.exceptions.BillingServicesDownException;
 import com.cg.mobilebilling.exceptions.PlanDetailsNotFoundException;
+
 
 @Repository
 public class BillingDAOServicesImpl implements BillingDAOServices {
@@ -26,9 +29,12 @@ private EntityManager em;
 	}
 
 	@Override
-	public long insertPostPaidAccount(int customerID, PostpaidAccount account) {
-		// TODO Auto-generated method stub
-		return 0;
+	public PostpaidAccount insertPostPaidAccount(int customerID, PostpaidAccount account) {
+		Customer customer=em.find(Customer.class,customerID);
+		account.setCustomer(customer);
+		em.persist(account);
+		customer.setPostpaidAccounts(account);
+		return account;
 	}
 
 	@Override
@@ -38,27 +44,35 @@ private EntityManager em;
 	}
 
 	@Override
-	public int insertMonthlybill(int customerID, long mobileNo, Bill bill) {
-		// TODO Auto-generated method stub
-		return 0;
+	public Bill insertMonthlybill(int customerID, long mobileNo, Bill bill) {
+		PostpaidAccount paccount=em.find(PostpaidAccount.class, mobileNo);
+		bill.setPostpaidaccount(paccount);
+		em.persist(bill);
+		paccount.setBills(bill);
+		return bill;
 	}
 
 	@Override
-	public int insertPlan(Plan plan) throws PlanDetailsNotFoundException {
-		// TODO Auto-generated method stub
-		return 0;
+	public StandardPlan insertPlan(StandardPlan plan) throws PlanDetailsNotFoundException {
+	em.persist(plan);
+	em.flush();
+	return plan;
 	}
 
 	@Override
 	public boolean deletePostPaidAccount(int customerID, long mobileNo) {
-		// TODO Auto-generated method stub
+		em.remove(getCustomerPostPaidAccount(customerID, mobileNo));
 		return false;
 	}
 
 	@Override
-	public Bill getMonthlyBill(int customerID, long mobileNo, String billMonth) {
-		// TODO Auto-generated method stub
-		return null;
+	public Bill getMonthlyBill(long mobileNo, String billMonth) {
+		String query = "Select b from Bill b where b.postpaidaccount.mobileNo=:mobileNo and b.billMonth=:billMonth" ;
+		TypedQuery<Bill> qry = em.createQuery(query, Bill.class);
+		qry.setParameter("mobileNo", mobileNo);
+		qry.setParameter("billMonth", billMonth);
+		Bill bill = qry.getSingleResult();
+		return bill;
 	}
 
 	@Override
@@ -81,8 +95,9 @@ private EntityManager em;
 
 	@Override
 	public List<Customer> getAllCustomers() {
-		// TODO Auto-generated method stub
-		return null;
+		TypedQuery<Customer> query = em.createQuery("select c from Customer c",Customer.class);
+
+		return query.getResultList(); 
 	}
 
 	@Override
@@ -91,12 +106,7 @@ private EntityManager em;
 		return null;
 	}
 
-	@Override
-	public Plan getPlan(int planID) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
+	
 	@Override
 	public PostpaidAccount getCustomerPostPaidAccount(int customerID, long mobileNo) {
 		// TODO Auto-generated method stub
@@ -104,15 +114,21 @@ private EntityManager em;
 	}
 
 	@Override
-	public Plan getPlanDetails(int customerID, long mobileNo) {
-		// TODO Auto-generated method stub
-		return null;
+	public PostpaidAccount getPlanDetails(int customerID, long mobileNo) {
+	PostpaidAccount pAccount = em.find(PostpaidAccount.class, mobileNo);
+		return pAccount;
 	}
 
 	@Override
 	public boolean deleteCustomer(int customerID) {
-		// TODO Auto-generated method stub
-		return false;
+		em.remove(getCustomer(customerID));
+		return true;
+	}
+
+	@Override
+	public StandardPlan getPlan(int planID) {
+		StandardPlan plan = em.find(StandardPlan.class,planID);
+		return plan;
 	}
 	
 }

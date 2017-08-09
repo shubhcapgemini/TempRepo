@@ -5,8 +5,11 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
+import javax.xml.bind.annotation.XmlRootElement;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
+@XmlRootElement
 @Entity
 public class Bill {
 	
@@ -17,6 +20,7 @@ public class Bill {
 	private String billMonth;
 	private float totalBillAmount, localSMSAmount, stdSMSAmount, localCallAmount, stdCallAmount, internetDataUsageAmount, servicesTax, vat;
 
+	@JsonIgnore
 	@ManyToOne
 	private PostpaidAccount postpaidaccount;
 	
@@ -45,6 +49,27 @@ public class Bill {
 		this.servicesTax = servicesTax;
 		this.vat = vat;
 		this.postpaidaccount = postpaidaccount;
+	}
+	
+
+	public Bill(int noOfLocalSMS, int noOfStdSMS, int noOfLocalCalls, int noOfStdCalls, int internetDataUsageUnits,
+			String billMonth, float totalBillAmount, float localSMSAmount, float stdSMSAmount, float localCallAmount,
+			float stdCallAmount, float internetDataUsageAmount, float servicesTax, float vat) {
+		super();
+		this.noOfLocalSMS = noOfLocalSMS;
+		this.noOfStdSMS = noOfStdSMS;
+		this.noOfLocalCalls = noOfLocalCalls;
+		this.noOfStdCalls = noOfStdCalls;
+		this.internetDataUsageUnits = internetDataUsageUnits;
+		this.billMonth = billMonth;
+		this.totalBillAmount = totalBillAmount;
+		this.localSMSAmount = localSMSAmount;
+		this.stdSMSAmount = stdSMSAmount;
+		this.localCallAmount = localCallAmount;
+		this.stdCallAmount = stdCallAmount;
+		this.internetDataUsageAmount = internetDataUsageAmount;
+		this.servicesTax = servicesTax;
+		this.vat = vat;
 	}
 
 	public int getBillID() {
@@ -174,4 +199,17 @@ public class Bill {
 	public void setPostpaidaccount(PostpaidAccount postpaidaccount) {
 		this.postpaidaccount = postpaidaccount;
 	}
+
+	@Override
+	public String toString() {
+		return "Bill [billID=" + billID + ", noOfLocalSMS=" + noOfLocalSMS + ", noOfStdSMS=" + noOfStdSMS
+				+ ", noOfLocalCalls=" + noOfLocalCalls + ", noOfStdCalls=" + noOfStdCalls + ", internetDataUsageUnits="
+				+ internetDataUsageUnits + ", billMonth=" + billMonth + ", totalBillAmount=" + totalBillAmount
+				+ ", localSMSAmount=" + localSMSAmount + ", stdSMSAmount=" + stdSMSAmount + ", localCallAmount="
+				+ localCallAmount + ", stdCallAmount=" + stdCallAmount + ", internetDataUsageAmount="
+				+ internetDataUsageAmount + ", servicesTax=" + servicesTax + ", vat=" + vat + ", postpaidaccount="
+				+ postpaidaccount + "]";
+	}
+	
+	
 }
