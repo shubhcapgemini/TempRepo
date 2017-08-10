@@ -108,7 +108,7 @@ public class BillingServicesImpl implements BillingServices {
 	public List<PostpaidAccount> getCustomerAllPostpaidAccountsDetails(int customerID)
 			throws CustomerDetailsNotFoundException, BillingServicesDownException {
 		// TODO Auto-generated method stub
-		return null;
+		return dao.getCustomerPostPaidAccounts(customerID);
 	}
 
 	@Override
@@ -120,18 +120,27 @@ public class BillingServicesImpl implements BillingServices {
 	}
 
 	@Override
-	public List<Bill> getCustomerPostPaidAccountAllBillDetails(int customerID, long mobileNo)
+	public List<Bill> getCustomerPostPaidAccountAllBillDetails(long mobileNo)
 			throws CustomerDetailsNotFoundException, PostpaidAccountNotFoundException, BillingServicesDownException,
 			BillDetailsNotFoundException {
-		// TODO Auto-generated method stub
-		return null;
+		
+		return dao.getCustomerPostPaidAccountAllBills(mobileNo);
 	}
 
 	@Override
-	public boolean changePlan(int customerID, long mobileNo, int planID) throws CustomerDetailsNotFoundException,
+	public PostpaidAccount changePlan(int customerID, long mobileNo, int planID) throws CustomerDetailsNotFoundException,
 	PostpaidAccountNotFoundException, PlanDetailsNotFoundException, BillingServicesDownException {
-		// TODO Auto-generated method stub
-		return false;
+		StandardPlan splan= dao.getPlan(planID);
+		Plan plan=new Plan(splan.getPlanID(),splan.getMonthlyRental(),splan.getFreeLocalCalls(), splan.getFreeStdCalls(), splan.getFreeLocalSMS(), splan.getFreeStdSMS(), splan.getFreeInternetDataUsageUnits(), splan.getLocalCallRate(), splan.getStdCallRate(), splan.getLocalSMSRate(), splan.getStdSMSRate(), splan.getInternetDataUsageRate(), splan.getPlanCircle(), splan.getPlanName());
+         /*   Customer cust = new Customer(customerID);*/
+		Customer cust =dao.getCustomer(customerID);
+            PostpaidAccount acc= new PostpaidAccount();
+            
+          /*  cust.setCustomerID(customerID);*/
+            acc.setPlan(plan);
+            acc.setCustomer(cust);
+            acc.setMobileNo(mobileNo);
+		return dao.updatePostPaidAccount(customerID, acc);
 	}
 
 	@Override

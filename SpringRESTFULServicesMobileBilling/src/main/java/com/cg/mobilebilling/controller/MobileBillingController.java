@@ -109,4 +109,26 @@ public class MobileBillingController {
 		System.out.println("details "+bill);
 		return new ResponseEntity<>(bill,HttpStatus.OK);
 	}
+	
+	
+	@RequestMapping(value="/UpdatePostPaidAccountDetail",method=RequestMethod.PUT)
+	public ResponseEntity<String>UpdatePostPaidAccountDetail(@RequestParam("customerID")int customerID, @RequestParam("mobileNo")long mobileNo, @RequestParam("planID")int planID)throws CustomerDetailsNotFoundException, PostpaidAccountNotFoundException, PlanDetailsNotFoundException, BillingServicesDownException {
+		 PostpaidAccount account = services.changePlan(customerID, mobileNo, planID);
+			
+		return new ResponseEntity<>("postPaidAccount details succesfully updated",HttpStatus.OK);
+	}
+	
+	@RequestMapping(value={"/getCustomerAllPostpaidAccountsDetailsJSON"},headers="Accept=application/json")
+	public ResponseEntity<ArrayList<PostpaidAccount>> getCustomerAllPostpaidAccountsDetails(@RequestParam("customerID")int customerID) throws CustomerDetailsNotFoundException, BillingServicesDownException{
+	ArrayList<PostpaidAccount> accountList=(ArrayList<PostpaidAccount>) services.getCustomerAllPostpaidAccountsDetails(customerID);
+	return new ResponseEntity<>(accountList,HttpStatus.OK);
+	}
+	
+	@RequestMapping(value={"/getCustomerAllPostpaidAccountBillsDetailsJSON"},headers="Accept=application/json")
+	public ResponseEntity<ArrayList<Bill>> getCustomerAllPostpaidAccountBillsDetails(@RequestParam("mobileNo")long mobileNo) throws CustomerDetailsNotFoundException, BillingServicesDownException, PostpaidAccountNotFoundException, BillDetailsNotFoundException{
+	ArrayList<Bill> accountList=(ArrayList<Bill>) services.getCustomerPostPaidAccountAllBillDetails(mobileNo);
+	return new ResponseEntity<>(accountList,HttpStatus.OK);
+	}
+	
+	
 }

@@ -10,12 +10,12 @@ import com.cg.mobilebilling.exceptions.PlanDetailsNotFoundException;
 public interface BillingDAOServices {
 	Customer insertCustomer(Customer customer) throws BillingServicesDownException ;
 	PostpaidAccount insertPostPaidAccount(int customerID, PostpaidAccount account);
-	boolean updatePostPaidAccount(int customerID, PostpaidAccount account);
+	PostpaidAccount updatePostPaidAccount(int customerID, PostpaidAccount account);
 	Bill insertMonthlybill(int customerID, long mobileNo, Bill bill);
 	StandardPlan insertPlan(StandardPlan plan) throws PlanDetailsNotFoundException;
 	boolean deletePostPaidAccount(int customerID, long mobileNo);
 	Bill getMonthlyBill(long mobileNo, String billMonth);
-	List<Bill> getCustomerPostPaidAccountAllBills(int customerID, long mobileNo);
+	List<Bill> getCustomerPostPaidAccountAllBills(long mobileNo);
 	List<PostpaidAccount> getCustomerPostPaidAccounts(int customerID);
 	Customer getCustomer(int customerID);
 	List<Customer>  getAllCustomers();

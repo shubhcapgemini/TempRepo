@@ -37,11 +37,7 @@ private EntityManager em;
 		return account;
 	}
 
-	@Override
-	public boolean updatePostPaidAccount(int customerID, PostpaidAccount account) {
-		// TODO Auto-generated method stub
-		return false;
-	}
+	
 
 	@Override
 	public Bill insertMonthlybill(int customerID, long mobileNo, Bill bill) {
@@ -76,15 +72,18 @@ private EntityManager em;
 	}
 
 	@Override
-	public List<Bill> getCustomerPostPaidAccountAllBills(int customerID, long mobileNo) {
-		// TODO Auto-generated method stub
-		return null;
+	public List<Bill> getCustomerPostPaidAccountAllBills(long mobileNo) {
+		TypedQuery<Bill> query = em.createQuery("select b from Bill b where b.postpaidaccount.mobileNo=:mobileNo",Bill.class);
+		
+		query.setParameter("mobileNo", mobileNo);
+				return query.getResultList();
 	}
 
 	@Override
 	public List<PostpaidAccount> getCustomerPostPaidAccounts(int customerID) {
-		// TODO Auto-generated method stub
-		return null;
+		TypedQuery<PostpaidAccount> query = em.createQuery("select p from PostpaidAccount p where p.customer.customerID=:customerID",PostpaidAccount.class);
+        query.setParameter("customerID", customerID);
+		return query.getResultList(); 
 	}
 
 	@Override
@@ -129,6 +128,12 @@ private EntityManager em;
 	public StandardPlan getPlan(int planID) {
 		StandardPlan plan = em.find(StandardPlan.class,planID);
 		return plan;
+	}
+
+	@Override
+	public PostpaidAccount updatePostPaidAccount(int customerID, PostpaidAccount account) {
+	PostpaidAccount acc = em.merge(account);
+		return acc;
 	}
 	
 }

@@ -133,5 +133,12 @@ public class Customer {
 				+ ", emailID=" + emailID + ", dateOfBirth=" + dateOfBirth + ", password=" + password + ", address="
 				+ address + ", postpaidAccounts=" + postpaidAccounts + "]";
 	}
+
+	public Customer(int customerID) {
+		super();
+		this.customerID = customerID;
+	}
+	
+	
 	
 }

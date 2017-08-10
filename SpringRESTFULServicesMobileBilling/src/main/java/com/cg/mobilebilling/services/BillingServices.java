@@ -44,11 +44,11 @@ public interface BillingServices {
 			throws CustomerDetailsNotFoundException, PostpaidAccountNotFoundException, 
 			InvalidBillMonthException, BillDetailsNotFoundException, BillingServicesDownException;
 	
-	List<Bill> getCustomerPostPaidAccountAllBillDetails(int customerID, long mobileNo) 
+	List<Bill> getCustomerPostPaidAccountAllBillDetails(long mobileNo) 
 			throws CustomerDetailsNotFoundException, PostpaidAccountNotFoundException, 
 			BillingServicesDownException, BillDetailsNotFoundException;
 	boolean deletePostPaidAccount(int customerID, long mobileNo)throws CustomerDetailsNotFoundException,PostpaidAccountNotFoundException,BillingServicesDownException;
-	boolean changePlan(int customerID, long mobileNo, int planID)
+	PostpaidAccount changePlan(int customerID, long mobileNo, int planID)
 			throws CustomerDetailsNotFoundException, PostpaidAccountNotFoundException, 
 			PlanDetailsNotFoundException, BillingServicesDownException;
 	
