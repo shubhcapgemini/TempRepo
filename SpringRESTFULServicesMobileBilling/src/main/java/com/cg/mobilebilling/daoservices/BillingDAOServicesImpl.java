@@ -58,7 +58,7 @@ private EntityManager em;
 	@Override
 	public boolean deletePostPaidAccount(int customerID, long mobileNo) {
 		em.remove(getCustomerPostPaidAccount(customerID, mobileNo));
-		return false;
+		return true;
 	}
 
 	@Override
@@ -100,16 +100,20 @@ private EntityManager em;
 	}
 
 	@Override
-	public List<Plan> getAllPlans() {
-		// TODO Auto-generated method stub
-		return null;
+	public List<StandardPlan> getAllPlans() {
+		TypedQuery<StandardPlan> query = em.createQuery("select s from StandardPlan s",StandardPlan.class);
+		return query.getResultList();
 	}
 
 	
 	@Override
 	public PostpaidAccount getCustomerPostPaidAccount(int customerID, long mobileNo) {
-		// TODO Auto-generated method stub
-		return null;
+		String query = "Select p from PostpaidAccount p where p.customer.customerID=:customerID and p.mobileNo=:mobileNo" ;
+		TypedQuery<PostpaidAccount> qry = em.createQuery(query, PostpaidAccount.class);
+		qry.setParameter("customerID", customerID);
+		qry.setParameter("mobileNo", mobileNo);
+		PostpaidAccount postPaidAccount = qry.getSingleResult();
+		return postPaidAccount;
 	}
 
 	@Override

@@ -95,8 +95,8 @@ public class MobileBillingController {
 		return new ResponseEntity<>(bill,HttpStatus.OK);
 	}
 	
-	@RequestMapping(value="/deletePostPaidAccountDetail/{customerID}/{mobileNo}",method=RequestMethod.DELETE)
-	public ResponseEntity<String>deletePostPaidAccountDetail(@PathVariable("customerID")int customerID,@PathVariable("mobileNo")long mobileNo)throws CustomerDetailsNotFoundException, BillingServicesDownException, PostpaidAccountNotFoundException{
+	@RequestMapping(value= {"/deletePostPaidAccountDetail"},method=RequestMethod.DELETE)
+	public ResponseEntity<String>deletePostPaidAccountDetail(@RequestParam("customerID")int customerID,@RequestParam("mobileNo")long mobileNo)throws CustomerDetailsNotFoundException, BillingServicesDownException, PostpaidAccountNotFoundException{
 		boolean postPaidAccount = services.deletePostPaidAccount(customerID, mobileNo);
 			if(postPaidAccount==false)throw new CustomerDetailsNotFoundException("postPaidAccount detail not found with product code"+customerID);
 		return new ResponseEntity<>("postPaidAccount details succesfully deleted",HttpStatus.OK);
@@ -128,6 +128,12 @@ public class MobileBillingController {
 	public ResponseEntity<ArrayList<Bill>> getCustomerAllPostpaidAccountBillsDetails(@RequestParam("mobileNo")long mobileNo) throws CustomerDetailsNotFoundException, BillingServicesDownException, PostpaidAccountNotFoundException, BillDetailsNotFoundException{
 	ArrayList<Bill> accountList=(ArrayList<Bill>) services.getCustomerPostPaidAccountAllBillDetails(mobileNo);
 	return new ResponseEntity<>(accountList,HttpStatus.OK);
+	}
+	
+	@RequestMapping(value={"/allPlanDetailsJSON"},headers="Accept=application/json")
+	public ResponseEntity<ArrayList<StandardPlan>> allPlanDetails() throws BillingServicesDownException{
+	ArrayList<StandardPlan> planList=(ArrayList<StandardPlan>) services.getAllPlans();
+	return new ResponseEntity<>(planList,HttpStatus.OK);
 	}
 	
 	

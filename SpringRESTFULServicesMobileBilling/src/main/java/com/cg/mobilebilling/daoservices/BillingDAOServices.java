@@ -19,7 +19,7 @@ public interface BillingDAOServices {
 	List<PostpaidAccount> getCustomerPostPaidAccounts(int customerID);
 	Customer getCustomer(int customerID);
 	List<Customer>  getAllCustomers();
-	List<Plan> getAllPlans();
+	List<StandardPlan> getAllPlans();
 	StandardPlan getPlan(int planID);
 	PostpaidAccount getCustomerPostPaidAccount(int customerID, long mobileNo);
 	PostpaidAccount getPlanDetails(int customerID, long mobileNo);

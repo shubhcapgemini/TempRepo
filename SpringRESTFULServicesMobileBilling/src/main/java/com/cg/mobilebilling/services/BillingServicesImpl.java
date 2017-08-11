@@ -100,8 +100,8 @@ public class BillingServicesImpl implements BillingServices {
 	@Override
 	public PostpaidAccount getPostPaidAccountDetails(int customerID, long mobileNo)
 			throws CustomerDetailsNotFoundException, PostpaidAccountNotFoundException, BillingServicesDownException {
-		// TODO Auto-generated method stub
-		return null;
+	
+		return dao.getCustomerPostPaidAccount(customerID, mobileNo);
 	}
 
 	@Override
@@ -196,6 +196,12 @@ public class BillingServicesImpl implements BillingServices {
 			throws CustomerDetailsNotFoundException, PostpaidAccountNotFoundException, BillingServicesDownException {
 
 		return dao.deletePostPaidAccount(customerID, mobileNo);
+	}
+
+	@Override
+	public List<StandardPlan> getAllPlans() throws BillingServicesDownException {
+		
+		return dao.getAllPlans();
 	}
 
 }
