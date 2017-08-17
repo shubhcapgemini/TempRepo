@@ -1,5 +1,6 @@
 package com.cg.mobilebilling.beans;
 
+
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -27,6 +28,30 @@ public class Bill {
 	public Bill() {
 		super();
 	}
+	
+
+	public Bill(int billID, int noOfLocalSMS, int noOfStdSMS, int noOfLocalCalls, int noOfStdCalls,
+			int internetDataUsageUnits, String billMonth, float totalBillAmount, float localSMSAmount,
+			float stdSMSAmount, float localCallAmount, float stdCallAmount, float internetDataUsageAmount,
+			float servicesTax, float vat) {
+		super();
+		this.billID = billID;
+		this.noOfLocalSMS = noOfLocalSMS;
+		this.noOfStdSMS = noOfStdSMS;
+		this.noOfLocalCalls = noOfLocalCalls;
+		this.noOfStdCalls = noOfStdCalls;
+		this.internetDataUsageUnits = internetDataUsageUnits;
+		this.billMonth = billMonth;
+		this.totalBillAmount = totalBillAmount;
+		this.localSMSAmount = localSMSAmount;
+		this.stdSMSAmount = stdSMSAmount;
+		this.localCallAmount = localCallAmount;
+		this.stdCallAmount = stdCallAmount;
+		this.internetDataUsageAmount = internetDataUsageAmount;
+		this.servicesTax = servicesTax;
+		this.vat = vat;
+	}
+
 
 	public Bill(int billID, int noOfLocalSMS, int noOfStdSMS, int noOfLocalCalls, int noOfStdCalls,
 			int internetDataUsageUnits, String billMonth, float totalBillAmount, float localSMSAmount,
@@ -71,6 +96,12 @@ public class Bill {
 		this.servicesTax = servicesTax;
 		this.vat = vat;
 	}
+
+	public Bill(int i, int j, int k, int l, int m, int n, int o, String string, int p, int q, int r, int s, int t,
+			int u, int v) {
+		// TODO Auto-generated constructor stub
+	}
+
 
 	public int getBillID() {
 		return billID;

@@ -3,6 +3,7 @@ package com.cg.mobilebilling.daoservices;
 import java.util.List;
 
 import javax.persistence.EntityManager;
+import javax.persistence.EntityTransaction;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
 
@@ -10,7 +11,6 @@ import org.springframework.stereotype.Repository;
 
 import com.cg.mobilebilling.beans.Bill;
 import com.cg.mobilebilling.beans.Customer;
-import com.cg.mobilebilling.beans.Plan;
 import com.cg.mobilebilling.beans.PostpaidAccount;
 import com.cg.mobilebilling.beans.StandardPlan;
 import com.cg.mobilebilling.exceptions.BillingServicesDownException;
@@ -19,8 +19,9 @@ import com.cg.mobilebilling.exceptions.PlanDetailsNotFoundException;
 
 @Repository
 public class BillingDAOServicesImpl implements BillingDAOServices {
-@PersistenceContext
-private EntityManager em;
+	@PersistenceContext
+	private EntityManager em;
+	
 	@Override
 	public Customer insertCustomer(Customer customer) throws BillingServicesDownException {
 		em.persist(customer);
@@ -37,7 +38,7 @@ private EntityManager em;
 		return account;
 	}
 
-	
+
 
 	@Override
 	public Bill insertMonthlybill(int customerID, long mobileNo, Bill bill) {
@@ -50,16 +51,12 @@ private EntityManager em;
 
 	@Override
 	public StandardPlan insertPlan(StandardPlan plan) throws PlanDetailsNotFoundException {
-	em.persist(plan);
-	em.flush();
-	return plan;
+		em.persist(plan);
+		em.flush();
+		return plan;
 	}
 
-	@Override
-	public boolean deletePostPaidAccount(int customerID, long mobileNo) {
-		em.remove(getCustomerPostPaidAccount(customerID, mobileNo));
-		return true;
-	}
+
 
 	@Override
 	public Bill getMonthlyBill(long mobileNo, String billMonth) {
@@ -74,15 +71,15 @@ private EntityManager em;
 	@Override
 	public List<Bill> getCustomerPostPaidAccountAllBills(long mobileNo) {
 		TypedQuery<Bill> query = em.createQuery("select b from Bill b where b.postpaidaccount.mobileNo=:mobileNo",Bill.class);
-		
+
 		query.setParameter("mobileNo", mobileNo);
-				return query.getResultList();
+		return query.getResultList();
 	}
 
 	@Override
 	public List<PostpaidAccount> getCustomerPostPaidAccounts(int customerID) {
 		TypedQuery<PostpaidAccount> query = em.createQuery("select p from PostpaidAccount p where p.customer.customerID=:customerID",PostpaidAccount.class);
-        query.setParameter("customerID", customerID);
+		query.setParameter("customerID", customerID);
 		return query.getResultList(); 
 	}
 
@@ -105,7 +102,7 @@ private EntityManager em;
 		return query.getResultList();
 	}
 
-	
+
 	@Override
 	public PostpaidAccount getCustomerPostPaidAccount(int customerID, long mobileNo) {
 		String query = "Select p from PostpaidAccount p where p.customer.customerID=:customerID and p.mobileNo=:mobileNo" ;
@@ -118,14 +115,19 @@ private EntityManager em;
 
 	@Override
 	public PostpaidAccount getPlanDetails(int customerID, long mobileNo) {
-	PostpaidAccount pAccount = em.find(PostpaidAccount.class, mobileNo);
+		PostpaidAccount pAccount = em.find(PostpaidAccount.class, mobileNo);
 		return pAccount;
 	}
 
 	@Override
 	public boolean deleteCustomer(int customerID) {
+		Customer cust=  em.find(Customer.class, customerID);
+		if(cust!=null) {
 		em.remove(getCustomer(customerID));
 		return true;
+		}else {
+			return false;
+		}
 	}
 
 	@Override
@@ -136,8 +138,22 @@ private EntityManager em;
 
 	@Override
 	public PostpaidAccount updatePostPaidAccount(int customerID, PostpaidAccount account) {
-	PostpaidAccount acc = em.merge(account);
+		PostpaidAccount acc = em.merge(account);
 		return acc;
 	}
+
+	@Override
+	public boolean deletePostPaidAccount(long mobileNo) {
 	
+		PostpaidAccount acc= em.find(PostpaidAccount.class, mobileNo);
+		if(acc!=null) {
+		 em.createQuery("delete from PostpaidAccount p where p.mobileNo=:mobileNo", PostpaidAccount.class).setParameter("mobileNo", mobileNo).executeUpdate();
+			 em.flush();
+		/*	 em.refresh(getCustomerPostPaidAccount(customerID, mobileNo));*/
+	/*	em.remove(acc);*/
+			return true;
+		}else {
+			return false;
+		}
+	}	
 }

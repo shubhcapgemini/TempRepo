@@ -12,10 +12,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-
 import com.cg.mobilebilling.beans.Bill;
 import com.cg.mobilebilling.beans.Customer;
-import com.cg.mobilebilling.beans.Plan;
 import com.cg.mobilebilling.beans.PostpaidAccount;
 import com.cg.mobilebilling.beans.StandardPlan;
 import com.cg.mobilebilling.exceptions.BillDetailsNotFoundException;
@@ -46,7 +44,6 @@ public class MobileBillingController {
 	@RequestMapping(value={"/CustomerDetailsRequestParam"},headers="Accept=application/json")
 	public ResponseEntity<Customer>getCustomerDetails(@RequestParam("customerID")int customerID) throws CustomerDetailsNotFoundException, BillingServicesDownException{
 		Customer customer=services.getCustomerDetails(customerID);
-		System.out.println("details "+customer);
 		return new ResponseEntity<>(customer,HttpStatus.OK);
 	}
 	
@@ -59,7 +56,7 @@ public class MobileBillingController {
 	@RequestMapping(value="/deleteCustomerDetail/{customerID}",method=RequestMethod.DELETE)
 	public ResponseEntity<String>deleteCustomerDetail(@PathVariable("customerID")int customerID)throws CustomerDetailsNotFoundException, BillingServicesDownException{
 		boolean customer = services.deleteCustomer(customerID);
-			if(customer==false)throw new CustomerDetailsNotFoundException("Customer detail not found with product code"+customerID);
+			if(customer==false)throw new CustomerDetailsNotFoundException("Customer details with CustomerId:" +customerID+ " not found");
 		return new ResponseEntity<>("Customer details succesfully deleted",HttpStatus.OK);
 	}
 	
@@ -95,17 +92,18 @@ public class MobileBillingController {
 		return new ResponseEntity<>(bill,HttpStatus.OK);
 	}
 	
-	@RequestMapping(value= {"/deletePostPaidAccountDetail"},method=RequestMethod.DELETE)
-	public ResponseEntity<String>deletePostPaidAccountDetail(@RequestParam("customerID")int customerID,@RequestParam("mobileNo")long mobileNo)throws CustomerDetailsNotFoundException, BillingServicesDownException, PostpaidAccountNotFoundException{
-		boolean postPaidAccount = services.deletePostPaidAccount(customerID, mobileNo);
-			if(postPaidAccount==false)throw new CustomerDetailsNotFoundException("postPaidAccount detail not found with product code"+customerID);
-		return new ResponseEntity<>("postPaidAccount details succesfully deleted",HttpStatus.OK);
+	@RequestMapping(value= "/deletePostPaidAccountDetail/{mobileNo}",method=RequestMethod.DELETE)
+	public ResponseEntity<String>deletePostPaidAccountDetail(@PathVariable("mobileNo")long mobileNo)throws BillingServicesDownException, PostpaidAccountNotFoundException{
+		boolean postPaidAccount = services.closeCustomerPostPaidAccount(mobileNo);
+			if(postPaidAccount==false)throw new PostpaidAccountNotFoundException("postPaidAccount detail not found with Mobile number"+mobileNo);
+		return new ResponseEntity<>("PostPaidAccount details with Mobile number: "+mobileNo+" succesfully deleted",HttpStatus.OK);
 	}
 	
 	
 	@RequestMapping(value={"/GetMonthlyBillDetails"},headers="Accept=application/json")
 	public ResponseEntity<Bill>GetMonthlyBillDetails(@RequestParam("mobileNo")long mobileNo,@RequestParam("billMonth")String billMonth) throws CustomerDetailsNotFoundException, BillingServicesDownException, PostpaidAccountNotFoundException, InvalidBillMonthException, BillDetailsNotFoundException{
 	Bill bill = services.getMobileBillDetails(mobileNo, billMonth);
+	if(bill==null)throw new InvalidBillMonthException("bill month"+billMonth+"wrong");
 		System.out.println("details "+bill);
 		return new ResponseEntity<>(bill,HttpStatus.OK);
 	}
@@ -114,8 +112,7 @@ public class MobileBillingController {
 	@RequestMapping(value="/UpdatePostPaidAccountDetail",method=RequestMethod.PUT)
 	public ResponseEntity<String>UpdatePostPaidAccountDetail(@RequestParam("customerID")int customerID, @RequestParam("mobileNo")long mobileNo, @RequestParam("planID")int planID)throws CustomerDetailsNotFoundException, PostpaidAccountNotFoundException, PlanDetailsNotFoundException, BillingServicesDownException {
 		 PostpaidAccount account = services.changePlan(customerID, mobileNo, planID);
-			
-		return new ResponseEntity<>("postPaidAccount details succesfully updated",HttpStatus.OK);
+		return new ResponseEntity<>("postPaidAccount details succesfully updated for mobile number "+account.getMobileNo(),HttpStatus.OK);
 	}
 	
 	@RequestMapping(value={"/getCustomerAllPostpaidAccountsDetailsJSON"},headers="Accept=application/json")
@@ -134,6 +131,13 @@ public class MobileBillingController {
 	public ResponseEntity<ArrayList<StandardPlan>> allPlanDetails() throws BillingServicesDownException{
 	ArrayList<StandardPlan> planList=(ArrayList<StandardPlan>) services.getAllPlans();
 	return new ResponseEntity<>(planList,HttpStatus.OK);
+	}
+	
+	@RequestMapping(value={"/getCustomerPostPaidAccountDetails"},headers="Accept=application/json")
+	public ResponseEntity<PostpaidAccount>getCustomerPostPaidAccountDetails(@RequestParam("customerID")int customerID,@RequestParam("mobileNo")long mobileNo) throws CustomerDetailsNotFoundException, BillingServicesDownException, PostpaidAccountNotFoundException{
+		PostpaidAccount postPaidAccount=services.getPostPaidAccountDetails(customerID, mobileNo);
+		System.out.println("details "+postPaidAccount);
+		return new ResponseEntity<>(postPaidAccount,HttpStatus.OK);
 	}
 	
 	

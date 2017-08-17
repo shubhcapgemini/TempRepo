@@ -26,6 +26,20 @@ public class Customer {
 	@OneToMany(mappedBy = "customer" , cascade= CascadeType.ALL,fetch=FetchType.EAGER)
 	Map<Long,PostpaidAccount> postpaidAccounts=new HashMap<>();
 	
+	
+	
+	public Customer(int customerID, String firstName, String lastName, String emailID, String dateOfBirth,
+			String password, Address address) {
+		super();
+		this.customerID = customerID;
+		this.firstName = firstName;
+		this.lastName = lastName;
+		this.emailID = emailID;
+		this.dateOfBirth = dateOfBirth;
+		this.password = password;
+		this.address = address;
+	}
+
 	public Customer() {
 		super();
 	}

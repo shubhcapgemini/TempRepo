@@ -31,12 +31,28 @@ public class PostpaidAccount {
 	@JoinColumn(name="customerID")
 	private Customer customer;
 
-	@OneToMany(mappedBy = "postpaidaccount" , fetch=FetchType.EAGER, cascade = CascadeType.ALL)
+	@OneToMany(mappedBy = "postpaidaccount" , fetch=FetchType.EAGER, cascade=CascadeType.ALL , orphanRemoval=true)
 	private Map<Integer, Bill> bills = new HashMap<>();
 	
 	public PostpaidAccount() {
 		super();
 	}
+	
+
+	public PostpaidAccount(long mobileNo, Plan plan, Customer customer, Map<Integer, Bill> bills) {
+		super();
+		this.mobileNo = mobileNo;
+		this.plan = plan;
+		this.customer = customer;
+		this.bills = bills;
+	}
+
+
+	public PostpaidAccount(long mobileNo) {
+		super();
+		this.mobileNo = mobileNo;
+	}
+
 
 	public PostpaidAccount(long mobileNo, Plan plan, Map<Integer, Bill> bills) {
 		super();
@@ -45,6 +61,16 @@ public class PostpaidAccount {
 		this.bills = bills;
 	}
 	
+	public PostpaidAccount(int i, Plan plan2, Bill bill) {
+		// TODO Auto-generated constructor stub
+	}
+
+
+	public PostpaidAccount(int i, Plan plan2, Customer customer2) {
+		// TODO Auto-generated constructor stub
+	}
+
+
 	public long getMobileNo() {
 		return mobileNo;
 	}
@@ -80,5 +106,10 @@ public class PostpaidAccount {
 
 	public void setCustomer(Customer customer) {
 		this.customer = customer;
-	}	
+	}
+
+	@Override
+	public String toString() {
+		return "PostpaidAccount [mobileNo=" + mobileNo + ", plan=" + plan + "]";
+	}
 }
